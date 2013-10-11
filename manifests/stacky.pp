@@ -16,7 +16,7 @@ class stacktach::stacky (
   vcsrepo { "${install_dir}/stacky":
     provider => git,
     ensure   => present,
-    source   => 'https://github.com/rackspace/stacky',
+    source   => 'https://github.com/rackerlabs/stacky',
   }
 
   file { "${install_dir}/stacky/stackyrc":
