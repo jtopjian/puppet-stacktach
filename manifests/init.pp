@@ -13,7 +13,7 @@ class stacktach (
   $stacktach_dir = "${install_dir}/app"
 
   # File globals
-  File { 
+  File {
     owner => 'root',
     group => 'root',
     mode  => '0644',
@@ -32,7 +32,7 @@ class stacktach (
   vcsrepo { $stacktach_dir:
     provider => git,
     ensure   => present,
-    source   => 'https://github.com/rackspace/stacktach',
+    source   => 'https://github.com/rackerlabs/stacktach',
     require  => File[$install_dir],
   }
 
