@@ -1,13 +1,14 @@
 class stacktach::apache (
   $servername,
   $install_dir     = $::stacktach::params::install_dir,
-  $apache_conf_dir = $::stacktach::params::apache_conf,
+  $apache_conf_dir = $::stacktach::params::apache_conf_dir,
   $www_user        = $::stacktach::params::www_user,
   $port            = 80,
   $ssl             = false,
   $ssl_cert        = undef,
   $ssl_key         = undef,
   $ssl_ca          = undef,
+  $htpasswd        = false,
 ) inherits stacktach::params {
 
   File {
@@ -19,6 +20,7 @@ class stacktach::apache (
 
   apache::vhost { $servername:
     servername          => $servername,
+    default_vhost       => true,
     port                => $port,
     docroot             => '/var/www',
     ssl                 => $ssl,
@@ -26,7 +28,7 @@ class stacktach::apache (
     ssl_key             => $ssl_key,
     ssl_ca              => $ssl_ca,
     wsgi_process_group  => 'stacktach',
-    wsgi_script_aliases => { '/' => '/usr/share/stacktach/wsgi/django.wsgi' },
+    wsgi_script_aliases => { '/' => "${install_dir}/wsgi/django.wsgi" },
   }
 
   file { "${install_dir}/wsgi":
@@ -43,4 +45,5 @@ class stacktach::apache (
     ensure  => present,
     content => template('stacktach/apache.erb'),
   }
+
 }

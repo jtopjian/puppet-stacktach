@@ -1,5 +1,4 @@
-class site::stacktach::packages {
-
+class stacktach::packages {
 
   package { 'python-pip':
     ensure => latest,
@@ -13,7 +12,7 @@ class site::stacktach::packages {
     ensure => latest,
   }
 
-  package { ['librabbitmq', 'kombu']:
+  package { ['librabbitmq', 'kombu', 'pympler']:
     ensure   => present,
     provider => pip,
     require  => [Package['build-essential'], Package['python-dev'], Package['librabbitmq-dev'], Package['python-pip']],

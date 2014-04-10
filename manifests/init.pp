@@ -1,9 +1,12 @@
 class stacktach (
   $db_password,
+  $db_engine   = $::stacktach::params::db_engine,
   $db_name     = $::stacktach::params::db_name,
   $db_host     = $::stacktach::params::db_host,
+  $db_port     = $::stacktach::params::db_port,
   $db_username = $::stacktach::params::db_username,
   $install_dir = $::stacktach::params::install_dir,
+  $log_dir     = $::stacktach::params::log_dir,
   $www_user    = $::stacktach::params::www_user,
   $deployments = {},
   $verifier    = {},
@@ -19,6 +22,10 @@ class stacktach (
     mode   => '0640',
   }
 
+  file { $log_dir:
+    ensure => directory,
+  }
+
   # Ensure the install_dir exists
   file { $install_dir:
     ensure => directory,
@@ -30,30 +37,31 @@ class stacktach (
     ensure   => present,
     source   => 'https://github.com/rackerlabs/stacktach',
     require  => File[$install_dir],
-  }
+  } ->
 
   # Create a config file
   file { "${install_dir}/stacktach_config.sh":
     ensure  => present,
     content => template('stacktach/stacktach_config.sh.erb'),
-    require => Vcsrepo[$stacktach_dir],
-  }
+  } ->
+
+  file { "${stacktach_dir}/__init__.py":
+    ensure => present,
+  } ->
 
   # Create a local_settings file -- like a config file
   file { "${stacktach_dir}/local_settings.py":
     ensure  => present,
     content => template('stacktach/local_settings.py.erb'),
-    require => File["${install_dir}/stacktach_config.sh"],
-  }
+  } ->
 
   file { "${install_dir}/stacktach_worker_config.json":
-    content => hash2json($stacktach_deployments),
-    require => File["${stacktach_dir}/local_settings.py"],
-  }
+    content => hash2json($deployments),
+    notify  => Exec['stacktach-db-sync'],
+  } ->
 
   file { "${install_dir}/stacktach_verifier_config.json":
-    content => hash2json($stacktach_verifier),
-    require => File["${install_dir}/stacktach_verifier_config.json"],
+    content => hash2json($verifier),
     notify  => Exec['stacktach-db-sync'],
   }
 
@@ -61,8 +69,9 @@ class stacktach (
     refreshonly => true,
     command     => 'python manage.py syncdb --noinput',
     cwd         => "${install_dir}/app",
-    environment => "PYTHONPATH=\$PYTHONPATH:${install_dir}/app",
+    environment => 'DJANGO_SETTINGS_MODULE=settings',
     path        => ['/bin', '/usr/bin'],
+    require     => File["${install_dir}/stacktach_verifier_config.json"],
     notify      => Exec['stacktach-migrate'],
   }
 
@@ -70,8 +79,9 @@ class stacktach (
     refreshonly => true,
     command     => 'python manage.py migrate',
     cwd         => "${install_dir}/app",
-    environment => "PYTHONPATH=\$PYTHONPATH:${install_dir}/app",
+    environment => 'DJANGO_SETTINGS_MODULE=settings',
     path        => ['/bin', '/usr/bin'],
+    require     => Exec['stacktach-db-sync'],
   }
 
 }

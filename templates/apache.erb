@@ -4,4 +4,10 @@ Alias /static <%= @install_dir -%>/app/static
 <Directory <%= @install_dir-%>/wsgi>
   Order allow,deny
   Allow from all
+  <% if @htpasswd -%>
+    AuthName "StackTach Access"
+    AuthType Basic
+    AuthUserFile <%= @htpasswd %>
+    require valid-user
+  <% end %>
 </Directory>
