@@ -1,7 +1,13 @@
 class stacktach::apache (
-  $conf_dir    = $::stacktach::params::apache_conf,
-  $web_entry   = $::stacktach::params::web_entry,
-  $install_dir = $::stacktach::params::install_dir
+  $servername,
+  $install_dir     = $::stacktach::params::install_dir,
+  $apache_conf_dir = $::stacktach::params::apache_conf,
+  $www_user        = $::stacktach::params::www_user,
+  $port            = 80,
+  $ssl             = false,
+  $ssl_cert        = undef,
+  $ssl_key         = undef,
+  $ssl_ca          = undef,
 ) inherits stacktach::params {
 
   File {
@@ -11,24 +17,29 @@ class stacktach::apache (
     notify => Service[$::stacktach::params::apache_service],
   }
 
+  apache::vhost { $servername:
+    servername          => $servername,
+    port                => $port,
+    docroot             => '/var/www',
+    ssl                 => $ssl,
+    ssl_cert            => $ssl_cert,
+    ssl_key             => $ssl_key,
+    ssl_ca              => $ssl_ca,
+    wsgi_process_group  => 'stacktach',
+    wsgi_script_aliases => { '/' => '/usr/share/stacktach/wsgi/django.wsgi' },
+  }
+
   file { "${install_dir}/wsgi":
     ensure => directory,
   }
 
-  # Modify STATIC_URL in settings.py
-  file_line { 'settings.py STATIC_URL':
-    path  => "${install_dir}/app/settings.py",
-    line  => "STATIC_URL = '${web_entry}/static/'",
-    match => "^STATIC_URL =",
-  }
- 
   file { "${install_dir}/wsgi/django.wsgi":
     ensure  => present,
     content => template('stacktach/django.wsgi.erb'),
     require => File["${install_dir}/wsgi"],
   }
 
-  file { "${conf_dir}/stacktach.conf":
+  file { "${apache_conf_dir}/stacktach.conf":
     ensure  => present,
     content => template('stacktach/apache.erb'),
   }

@@ -3,12 +3,12 @@ class stacktach::params {
   $db_host     = 'localhost'
   $db_username = 'stacktach'
   $install_dir = '/var/www/stacktach'
-  $web_entry   = '/stacktach'
 
   case $::osfamily {
     'Debian': {
-      $apache_conf    = '/etc/apache2/conf.d'
-      $apache_service = 'apache2'
+      $apache_conf_dir = '/etc/apache2/conf.d'
+      $apache_service  = 'apache2'
+      $www_user        = 'www-data'
     }
   }
 

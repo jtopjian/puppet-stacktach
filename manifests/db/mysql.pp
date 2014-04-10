@@ -1,9 +1,9 @@
 class stacktach::db::mysql (
   $db_password,
-  $db_name     = $::stacktach::params::db_name,
-  $db_host     = $::stacktach::params::db_host,
-  $db_username = $::stacktach::params::db_username,
-  $install_dir = $::stacktach::params::install_dir
+  $db_name          = $::stacktach::params::db_name,
+  $db_host          = $::stacktach::params::db_host,
+  $db_username      = $::stacktach::params::db_username,
+  $db_allowed_hosts = undef,
 ) inherits stacktach::params {
 
   # Create the database
@@ -12,14 +12,21 @@ class stacktach::db::mysql (
     password => $db_password,
     host     => $db_host,
     grant    => ['all'],
-    notify   => Exec['stacktach-db-sync'],
   }
 
-  exec { 'stacktach-db-sync':
-    refreshonly => true,
-    command     => 'python manage.py syncdb --noinput',
-    cwd         => "${install_dir}/app",
-    environment => "PYTHONPATH=\$PYTHONPATH:${install_dir}/app",
-    path        => ['/bin', '/usr/bin'],
+  if is_array($db_allowed_hosts) and count($db_allowed_hosts) > 0 {
+    $db_allowed_hosts.each |$host| {
+      mysql_user { "${db_username}@${host}":
+        password_hash => mysql_password($db_password),
+      }
+
+      mysql_grant { "${db_username}@${host}/${db_name}.*":
+        privileges => ['ALL'],
+        table      => "${db_name}.*",
+        user       => "${db_username}@${host}",
+        require    => Mysql_user["${db_username}@${host}"],
+      }
+    }
   }
+
 }
