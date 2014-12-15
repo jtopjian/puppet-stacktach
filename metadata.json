@@ -1,0 +1,23 @@
+{
+  "name": "jtopjian-stacktach",
+  "version": "2.0.0",
+  "author": "Joe Topjian",
+  "license": "Apache-2.0",
+  "summary": "Deploys StackTach",
+  "source": "https://github.com/jtopjian/jtopjian-stacktach",
+  "project_page": "https://github.com/jtopjian/jtopjian-stacktach",
+  "issues_url": "https://github.com/jtopjian/jtopjian-stacktach",
+  "tags": ["openstack", "stacktach"],
+  "operatingsystem_support": [
+    {
+    "operatingsystem": "Ubuntu",
+    "operatingsystemrelease": [ "14.04" ]
+    }
+   ],
+  "dependencies": [
+    { "name": "puppetlabs/apache", "version_requirement": ">= 1.2.0" },
+    { "name": "puppetlabs/mysql", "version_requirement": ">= 3.0.0" },
+    { "name": "stankevich/python", "version_requirement": ">= 1.8.2" },
+    { "name": "jtopjian/hash2json", "version_requirement": ">= 0.0.1" },
+  ]
+}

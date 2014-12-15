@@ -1,0 +1,10 @@
+description "stacktach-workers"
+author "Joe Topjian"
+
+start on (local-filesystems and net-device-up IFACE=eth0)
+stop on runlevel [016]
+
+respawn
+respawn limit 5 60
+
+exec sudo -u <%= scope['::stacktach::user'] %> bash -c 'DJANGO_SETTINGS_MODULE=settings /usr/bin/python <%= scope['::stacktach::install_dir'] %>/app/worker/start_workers.py'

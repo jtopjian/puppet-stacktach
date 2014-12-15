@@ -1,7 +1,0 @@
-WSGIScriptAlias <%= web_entry -%> <%= install_dir -%>/wsgi/django.wsgi
-WSGIDaemonProcess stacktach user=www-data group=www-data processes=3 threads=10
-Alias <%= web_entry -%>/static <%= install_dir -%>/app/static
-<Directory <%= install_dir-%>/wsgi>
-  Order allow,deny
-  Allow from all
-</Directory>
