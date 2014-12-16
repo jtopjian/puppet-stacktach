@@ -29,7 +29,7 @@ class stacktach::install {
     ensure   => present,
     provider => git,
     source   => 'https://github.com/rackerlabs/stacktach',
-    user     => $::stacktach::user,
+    owner    => $::stacktach::user,
     group    => $::stacktach::group,
     require  => File[$::stacktach::install_dir],
   }
@@ -39,7 +39,7 @@ class stacktach::install {
     ensure   => present,
     provider => git,
     source   => 'https://github.com/rackerlabs/stacky',
-    user     => $::stacktach::user,
+    owner    => $::stacktach::user,
     group    => $::stacktach::group,
     require  => File[$::stacktach::install_dir],
   }
