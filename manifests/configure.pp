@@ -26,7 +26,7 @@ class stacktach::configure {
     owner   => $::stacktach::user,
     group   => $::stacktach::group,
     mode    => '0640',
-    source  => 'puppet:///modules/stacktach/wsgi.py',
+    content => template('stacktach/wsgi.py.erb'),
     require => Vcsrepo["${::stacktach::install_dir}/app"],
   }
 

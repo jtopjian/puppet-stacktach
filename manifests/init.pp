@@ -1,10 +1,13 @@
 class stacktach (
-  $user            = 'www-data',
-  $group           = 'www-data',
-  $install_dir     = '/opt/stacktach',
-  $django_config   = {},
-  $verifier_config = {},
-  $worker_config   = {},
+  $user              = 'www-data',
+  $group             = 'www-data',
+  $install_dir       = '/opt/stacktach',
+  $htpasswd_file     = false,
+  $htpasswd_username = false,
+  $htpasswd_password = false,
+  $django_config     = {},
+  $verifier_config   = {},
+  $worker_config   =   {},
 ) {
 
   anchor { 'stacktach::start': } ->
