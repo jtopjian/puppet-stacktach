@@ -18,6 +18,6 @@
     { "name": "puppetlabs/apache", "version_requirement": ">= 1.2.0" },
     { "name": "puppetlabs/mysql", "version_requirement": ">= 3.0.0" },
     { "name": "stankevich/python", "version_requirement": ">= 1.8.2" },
-    { "name": "jtopjian/hash2json", "version_requirement": ">= 0.0.1" },
+    { "name": "jtopjian/hash2json", "version_requirement": ">= 0.0.1" }
   ]
 }
